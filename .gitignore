@@ -1,0 +1,27 @@
+.DS_Store
+Thumbs.db
+
+.env
+.env.local
+.env.*.local
+
+/vendor/
+/composer.lock
+
+/.idea/
+/*.iml
+.vscode/
+nbproject/
+
+*.log
+
+/tmp/
+/build/
+/dist/
+
+.phpunit.result.cache
+
+# Altri file/complementi
+*.bak
+*.swp
+*.swo
