@@ -174,6 +174,6 @@ the [GitHub repository](https://github.com/ViralAgency/MasterCaster/issues).
 
 ## License
 
-This package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This package is open-sourced software licensed under the [Apache 2 License](https://www.apache.org/licenses/LICENSE-2.0).
 
 ---

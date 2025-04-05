@@ -20,9 +20,24 @@ namespace ViralAgency\MasterCaster;
 use Doctrine\Inflector\InflectorFactory;
 use ReflectionClass;
 
+/**
+ * Class MasterCaster
+ *
+ * Provides functionality for constructing and initializing instances with dynamic properties
+ * based on given data, processing different data types, and handling conversions for properties.
+ * Includes support for converting arrays, objects, and scalar values and determining class types
+ * dynamically for building complex object structures.
+ */
 class MasterCaster {
 	private static string $BASE_NAMESPACE;
 
+	/**
+	 * Constructs a new instance and initializes object properties based on the provided data.
+	 *
+	 * @param object|array|null $data Optional data to initialize the object. It can be an object or an associative array where keys match the class properties. Any values provided will be processed and assigned to the corresponding properties.
+	 *
+	 * @return void
+	 */
 	public function __construct(object|array $data = null)
 	{
 		self::$BASE_NAMESPACE = getenv('API_MODEL_NAMESPACE');
@@ -46,7 +61,16 @@ class MasterCaster {
 		}
 	}
 
-	private function handleArrayValue(string $key, array $values): void
+	/**
+	 * Handles the processing of array values by pluralizing the key, iterating through the values,
+	 * and appropriately assigning them to the corresponding property.
+	 *
+	 * @param string $key The key representing the property to be populated.
+	 * @param array $values An array of values to be processed and assigned.
+	 *
+	 * @return void
+	 */
+	protected function handleArrayValue(string $key, array $values): void
 	{
 		$inflector = InflectorFactory::create()->build();
 		$key = $inflector->pluralize($key);
@@ -55,7 +79,16 @@ class MasterCaster {
 		}
 	}
 
-	private function handleObjectValue(string $key, object $value): void
+	/**
+	 * Handles the processing and assignment of an object value to the corresponding property
+	 * based on its type as defined in the class reflection.
+	 *
+	 * @param string $key The key representing the property to be processed.
+	 * @param object $value The object to be assigned to the property.
+	 *
+	 * @return void
+	 */
+	protected function handleObjectValue(string $key, object $value): void
 	{
 		$reflection = new ReflectionClass($this);
 		try {
@@ -78,12 +111,31 @@ class MasterCaster {
 		}
 	}
 
-	private function handleScalarValue(string $key, mixed $value): void
+	/**
+	 * Handles the processing of scalar values by determining their type and assigning them
+	 * as either an integer, boolean, or string to the corresponding property.
+	 *
+	 * @param string $key The key representing the property to be populated.
+	 * @param mixed $value The scalar value to be processed and assigned.
+	 *
+	 * @return void
+	 */
+	protected function handleScalarValue(string $key, mixed $value): void
 	{
 		$this->{$key} = is_numeric( $value ) ? (int) $value : ( is_bool( $value ) ? (bool) $value : (string) $value );
 	}
 
-	private function classBuilder(string $key, object $values, bool $isPlural = false)
+
+	/**
+	 * Constructs and returns an instance of a class based on the provided key and values.
+	 *
+	 * @param string $key The key used to determine the class name. The key may be converted to PascalCase and optionally singularized.
+	 * @param object $values An object containing the values to pass to the class constructor.
+	 * @param bool $isPlural Optional. Indicates whether the key should be singularized (default: false).
+	 *
+	 * @return object Either a new instance of the determined class with the provided values or the original values object if the class does not exist.
+	 */
+	protected function classBuilder(string $key, object $values, bool $isPlural = false)
 	{
 
 		$inflector = InflectorFactory::create()->build();
@@ -98,7 +150,14 @@ class MasterCaster {
 		return $values;
 	}
 
-	private function convertToPascalCase(string $value): string
+	/**
+	 * Converts a given string to PascalCase.
+	 *
+	 * @param string $value The input string to be converted. If the string contains underscores, it will be split into parts, and each part will be capitalized and concatenated.
+	 *
+	 * @return string The converted string in PascalCase format.
+	 */
+	protected function convertToPascalCase(string $value): string
 	{
 		if (str_contains($value, "_")) {
 			$parts = array_map('ucfirst', explode("_", $value));
