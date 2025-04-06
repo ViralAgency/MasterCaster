@@ -27,7 +27,7 @@ Alternatively, you can add the package to your `composer.json` file:
 
 ```json
 "require": {
-"viral-agency/master-caster": "^1.0"
+"viral-agency/master-caster": "^1.0.0"
 }
 ```
 
@@ -115,14 +115,6 @@ Replace the name following the third-party documentation.
 - Array casting of objects: MasterCaster translate the array of objects in the model-defined objects, getting che class name by singularize the array name
 - Names translations: MasterCaster translate automatically names from camelCase to PascalCase, in order to get the classnames correctly
 
-## Configuration
-
-Put in your .env file following line, by changing the value according your already-defined namespace of your model:
-
-```dotenv
-API_MODEL_NAMESPACE=SomeNameSpace\\
-```
-
 ## Troubleshooting
 
 #### Array of objects name is not pluralized
@@ -140,28 +132,17 @@ class CustomCaster extends MasterCaster {
 
     private function handleArrayValue(string $key, array $values): void
     {
-        $inflector = InflectorFactory::create()->build();
-        foreach ($values as $propertyValue) {
+        foreach ( $values as $value ) {
             if ($key === "video"){
-                $this->{$key}[] = $this->classBuilder($key, $propertyValue);
+                $this->$key[] = $this->buildObject( $key, $value, false);
             }
-            else {
-                $key = $inflector->pluralize($key)
-                $this->{$key}[] = is_object($propertyValue) ? $this->classBuilder($key, $propertyValue, true) : $propertyValue;
-            }
+            $this->key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
         }
     }
 }
 
 ```
 
-## Testing
-
-If your package includes tests, include instructions to run them:
-
-```bash
-composer test
-```
 
 ## Contributing
 
