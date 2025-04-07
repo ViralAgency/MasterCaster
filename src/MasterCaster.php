@@ -70,7 +70,7 @@ class MasterCaster {
 	protected function handleArrayValue( string $key, array $values ): void
 	{
 		foreach ( $values as $value ) {
-			$this->key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
+			$this->$key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
 		}
 	}
 
@@ -148,7 +148,7 @@ class MasterCaster {
 	 * @return void
 	 */
 	protected function handleScalarValue( string $key, mixed $value ): void {
-		$this->{$key} = is_numeric( $value ) ? (int) $value : ( is_bool( $value ) ? (bool) $value : (string) $value );
+		$this->$key = is_numeric( $value ) ? (int) $value : ( is_bool( $value ) ? (bool) $value : (string) $value );
 	}
 
 	/**
