@@ -130,9 +130,11 @@ class MasterCaster {
 			case 'object':
 				$stdClass     = new \stdClass();
 				$object     = $value;
+				break;
 
 			default:
 				$object = new $propertyType($value);
+				break;
 		}
 
 		return $object;
