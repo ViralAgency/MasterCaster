@@ -45,7 +45,7 @@ You can easily to use MasterCaster by defining a model from the third party API 
 
 
 ### Sample third-party API documentation
-Here a sample third party API documentation that fits the [Google JSON style guide](https://google.github.io/styleguide/jsoncstyleguide.xml
+Here a sample third party API documentation that fits the [Google JSON style guide](https://google.github.io/styleguide/jsoncstyleguide.xml)
 
 ```json
 {

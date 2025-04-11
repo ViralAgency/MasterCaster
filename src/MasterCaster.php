@@ -122,19 +122,14 @@ class MasterCaster {
 			throw $e;
 		}
 
-		switch ( $propertyType ) {
-			case 'array':
-				$object = new $classPathName($value);
-				break;
-
-			case 'object':
-				$stdClass     = new \stdClass();
-				$object     = $value;
-				break;
-
-			default:
-				$object = new $propertyType($value);
-				break;
+		//If the class exist or is array return the object
+		if (class_exists( $classPathName ) || $propertyType === 'array' ) {
+			$object = new $classPathName($value);
+		}
+		//otherwise is a generic stdClass
+		else {
+			$stdClass     = new \stdClass();
+			$object     = $value;
 		}
 
 		return $object;
