@@ -133,14 +133,17 @@ class CustomCaster extends MasterCaster {
     private function handleArrayValue(string $key, array $values): void
     {
         foreach ( $values as $value ) {
+            //add here the cases
             if ($key === "video"){
                 $this->$key[] = $this->buildObject( $key, $value, false);
             }
-            $this->key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
+            //otherwise let's proceed in default way
+            else {
+                $this->key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
+            }   
         }
     }
 }
-
 ```
 
 
