@@ -44,7 +44,7 @@ class MasterCaster {
 
 		if ( $data !== null ) {
 			foreach ( $data as $key => $value ) {
-				if ( ! property_exists( $this, $key ) ) {
+				if ( !property_exists( $this, $key ) ) {
 					continue;
 				}
 				if ( is_array( $value ) ) {
@@ -70,7 +70,8 @@ class MasterCaster {
 	protected function handleArrayValue( string $key, array $values ): void
 	{
 		foreach ( $values as $value ) {
-			$this->$key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
+
+			$this->$key[] = is_object($value) ? $this->buildObject( $key, $value, true ) : $value;
 		}
 	}
 
@@ -87,43 +88,46 @@ class MasterCaster {
 		$this->$key = $this->buildObject($key, $value);
 	}
 
+
 	/**
-	 * Builds and returns an object based on the provided key and value.
+	 * Builds and returns an object based on the provided key, value, and isPlural flag.
 	 *
-	 * @param string $key The key or property name used to determine the object class name.
-	 * @param object $value The value that will be used to create the object instance.
-	 * @param bool $isPlural Indicates whether the key represents a plural form (default: false). If true, the key will be singularized.
+	 * @param string $key The property key used to determine the class name or retrieve the property type.
+	 * @param object $value The value to initialize the created object, expected to be an object.
+	 * @param bool $isPlural Optional flag indicating whether the key should be treated as plural and singularized. Default is false.
 	 *
-	 * @return object The constructed object instance based on the resolved class name and property type.
+	 * @return object The newly instantiated object based on the key, value, and classpath. If no appropriate class is found, a generic stdClass is returned.
 	 *
-	 * @throws \ReflectionException If there is an error reflecting on the property or class.
+	 * @throws ReflectionException If an error occurs while trying to retrieve the property type using reflection.
 	 */
 	protected function buildObject( string $key, object $value, bool $isPlural = false ) : object
 	{
-
-		$name = $key;
 		$inflector = InflectorFactory::create()->build();
+		$reflection = new ReflectionClass( $this );
 
-		//Singularize the name is if plural
+		//Singularize the name is if plural and create the classpath
 		if ( $isPlural ) {
 			$name     = $inflector->singularize($key);
+			$className       = $inflector->classify($name);
+			$namespace       = $reflection->getNamespaceName() . '\\';
+			$classPathName   = $namespace . $className;
+		}
+		else {
+			try {
+				$classPathName = $reflection->getProperty($key)->getType()->getName();
+			}
+			catch ( ReflectionException $e ) {
+				echo $e->getMessage();
+				throw $e;
+			}
 		}
 
 		//Get the class name from the prperty name
-		try {
-			$reflection = new ReflectionClass( $this );
-			$propertyType = $reflection->getProperty($key)->getType()->getName();
-			$className       = $inflector->classify($name);
-			$namespace       = $reflection->getNamespaceName() . '\\';
-			$classPathName = $namespace . $className;
-		}
-		catch ( ReflectionException $e ) {
-			echo $e->getMessage();
-			throw $e;
-		}
+
+		$test = class_exists($classPathName);
 
 		//If the class exist or is array return the object
-		if (class_exists( $classPathName ) || $propertyType === 'array' ) {
+		if (class_exists( $classPathName )) {
 			$object = new $classPathName($value);
 		}
 		//otherwise is a generic stdClass
@@ -131,7 +135,6 @@ class MasterCaster {
 			$stdClass     = new \stdClass();
 			$object     = $value;
 		}
-
 		return $object;
 	}
 

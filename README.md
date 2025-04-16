@@ -139,7 +139,7 @@ class CustomCaster extends MasterCaster {
             }
             //otherwise let's proceed in default way
             else {
-                $this->key[] = is_object($values) ? $this->buildObject( $key, $value, true ) : $value;
+                $this->key[] = is_object($values) ? $this->buildObject($key, $value, true) : $value;
             }   
         }
     }
